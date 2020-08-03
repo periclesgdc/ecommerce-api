@@ -12,10 +12,6 @@ class Pedido extends Model
         'status_id'
     ];
 
-    // protected $attributes = [
-    //     'status_id' => env('STATUS_ID_PEDIDO_DEFAULT')
-    // ];
-
     function cliente()
     {
         return $this->belongsTo('App\Cliente');

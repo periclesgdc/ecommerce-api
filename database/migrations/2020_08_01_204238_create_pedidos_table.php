@@ -21,15 +21,6 @@ class CreatePedidosTable extends Migration
             $table->foreign('status_id')->references('id')->on('tb_status');
             $table->timestamps();
         });
-
-        Schema::create('tb_pedidos_produtos', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('pedido_id')->unsigned();
-            $table->foreign('pedido_id')->references('id')->on('tb_pedidos');
-            $table->integer('produto_id')->unsigned();
-            $table->foreign('produto_id')->references('id')->on('tb_produtos');
-            $table->timestamps();
-        });
     }
 
     /**
@@ -40,6 +31,5 @@ class CreatePedidosTable extends Migration
     public function down()
     {
         Schema::dropIfExists('tb_pedidos');
-        Schema::dropIfExists('tb_pedidos_produtos');
     }
 }

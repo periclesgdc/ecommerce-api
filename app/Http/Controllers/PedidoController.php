@@ -58,11 +58,44 @@ class PedidoController extends Controller
                 'message' => 'Registro salvo com sucesso',
             ], 201);
         } catch (\Exception $e) {
-            var_dump($e);
             DB::rollback();
 
             return response()->json([
                 'message' => 'Registro não persistido',
+            ], 422);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $pedido = Pedido::findOrFail($id);
+            $pedido->fill($request->all());
+            $pedido->save();
+
+            return response()->json([
+                'message' => 'Registro atualizado com sucesso',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Registro não atualizado',
+            ], 422);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $pedido = Pedido::findOrFail($id);
+            $pedido->delete();
+
+            return response()->json([
+                'message' => 'Registro deletado com sucesso',
+            ], 201);
+        } catch (\Exception $e) {
+            var_dump($e);
+            return response()->json([
+                'message' => 'Registro não excluído',
             ], 422);
         }
     }

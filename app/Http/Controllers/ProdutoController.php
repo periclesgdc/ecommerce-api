@@ -68,12 +68,16 @@ class ProdutoController extends Controller
     public function destroy($id)
     {
         try {
-            $produto = Produto::find($id);
+            $produto = Produto::findOrFail($id);
             $produto->delete();
+
+            return response()->json([
+                'message' => 'Registro deletado com sucesso',
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Registro não excluído',
-            ], 404);
+            ], 422);
         }
     }
 }
