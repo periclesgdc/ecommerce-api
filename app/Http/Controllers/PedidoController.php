@@ -12,7 +12,7 @@ class PedidoController extends Controller
     public function index()
     {
         try {
-            $pedidos = Pedido::with(['cliente_id', 'status_id'])->get();
+            $pedidos = Pedido::with('produtos')->get();
             return response()->json($pedidos);
         } catch (\Exception $e) {
             return response()->json([
