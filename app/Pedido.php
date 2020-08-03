@@ -6,18 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-    const CREATED_AT = 'criado_em';
-    const UPDATED_AT = 'ultima_atualizacao';
-
     protected $table = 'tb_pedidos';
     protected $fillable = [
         'cliente_id',
         'status_id'
     ];
 
-    protected $attributes = [
-        'status_id' => env('STATUS_ID_PEDIDO_DEFAULT')
-    ];
+    // protected $attributes = [
+    //     'status_id' => env('STATUS_ID_PEDIDO_DEFAULT')
+    // ];
 
     function cliente()
     {
