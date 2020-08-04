@@ -19,6 +19,6 @@ class Pedido extends Model
 
     function produtos()
     {
-      return $this->hasMany('App\PedidoProduto');
+        return $this->hasMany('App\PedidoProduto');
     }
 }

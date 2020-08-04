@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Produto;
+use Validator;
 
 class ProdutoController extends Controller
 {
@@ -34,6 +35,16 @@ class ProdutoController extends Controller
     {
         try {
             $data = $request->all();
+
+            $validator = Validator::make($data, [
+                'nome' => 'required|max:50',
+                'preco' => 'required|regex:/\d+\.{0,1}\d*/i'
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $produto = new Produto();
             $produto->fill($data);
             $produto->save();
@@ -43,7 +54,7 @@ class ProdutoController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Registro não persistido',
+                'message' => 'Registro não persistido. Erro: '.$e->getMessage(),
             ], 422);
         }
     }
@@ -51,8 +62,19 @@ class ProdutoController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $data = $request->all();
+
+            $validator = Validator::make($data, [
+                'nome' => 'max:50',
+                'preco' => 'regex:/\d+\.{0,1}\d*/i'
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $produto = Produto::findOrFail($id);
-            $produto->fill($request->all());
+            $produto->fill($data);
             $produto->save();
 
             return response()->json([
@@ -60,7 +82,7 @@ class ProdutoController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Registro não atualizado',
+                'message' => 'Registro não atualizado. Erro: '.$e->getMessage(),
             ], 422);
         }
     }

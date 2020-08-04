@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Pedido;
 use App\PedidoProduto;
+use Validator;
 
 class PedidoController extends Controller
 {
@@ -39,6 +40,17 @@ class PedidoController extends Controller
             DB::beginTransaction();
 
             $data = $request->all();
+
+            $validator = Validator::make($data, [
+                'cliente_id' => 'required|regex:/^\d+$/i',
+                'status_id' => 'required|regex:/^\d+$/i',
+                'produtos' => ['required', 'regex:/^(?!\|)(\|?\d+)+$/']
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $pedido = new Pedido();
             $pedido->fill($data);
             $pedido->save();
@@ -61,7 +73,7 @@ class PedidoController extends Controller
             DB::rollback();
 
             return response()->json([
-                'message' => 'Registro não persistido',
+                'message' => 'Registro não persistido. Erro: '.$e->getMessage(),
             ], 422);
         }
     }
@@ -69,16 +81,51 @@ class PedidoController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            DB::beginTransaction();
+
+            $data = $request->all();
+
+            $validator = Validator::make($data, [
+                //'cliente_id' => 'regex:/^\d+$/i',
+                'status_id' => 'regex:/^\d+$/i',
+                'produtos' => ['regex:/^(?!\|)(\|?\d+)+$/']
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $pedido = Pedido::findOrFail($id);
-            $pedido->fill($request->all());
+            $pedido->fill($data);
             $pedido->save();
+
+            if (isset($data['produtos'])) {
+                $pedidosProdutos = PedidoProduto::all()->where('pedido_id', $id);
+
+                foreach ($pedidosProdutos as $obj) {
+                    $obj->delete();
+                }
+
+                foreach (explode('|', $data['produtos']) as $produto_id) {
+                    $pedidoProdutos = new PedidoProduto();
+                    $pedidoProdutos->fill([
+                        'pedido_id' => $pedido->id,
+                        'produto_id' => $produto_id
+                    ]);
+                    $pedidoProdutos->save();
+                }
+            }
+
+            DB::commit();
 
             return response()->json([
                 'message' => 'Registro atualizado com sucesso',
             ], 201);
         } catch (\Exception $e) {
+            DB::rollback();
+
             return response()->json([
-                'message' => 'Registro não atualizado',
+                'message' => 'Registro não atualizado. Erro: '.$e->getMessage(),
             ], 422);
         }
     }

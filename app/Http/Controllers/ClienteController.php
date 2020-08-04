@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Cliente;
+use Validator;
 
 class ClienteController extends Controller
 {
@@ -34,6 +35,18 @@ class ClienteController extends Controller
     {
         try {
             $data = $request->all();
+
+            $validator = Validator::make($data, [
+                'nome' => 'required|max:200',
+                'email' => 'required|max:100|regex:/^.+@.+$/i',
+                'telefone' => 'required|max:25',
+                'endereco' => 'required|max:500'
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $cliente = new Cliente();
             $cliente->fill($data);
             $cliente->save();
@@ -51,8 +64,21 @@ class ClienteController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $data = $request->all();
+
+            $validator = Validator::make($data, [
+                'nome' => 'max:200',
+                'email' => 'max:100|regex:/^.+@.+$/i',
+                'telefone' => 'max:25',
+                'endereco' => 'max:500'
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Exception("Erro de validação", 1);
+            }
+
             $cliente = Cliente::findOrFail($id);
-            $cliente->fill($request->all());
+            $cliente->fill($data);
             $cliente->save();
 
             return response()->json([
