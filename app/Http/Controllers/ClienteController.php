@@ -56,7 +56,7 @@ class ClienteController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Registro não persistido',
+                'message' => 'Registro não persistido. Erro: '.$e->getMessage(),
             ], 422);
         }
     }
@@ -86,7 +86,7 @@ class ClienteController extends Controller
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Registro não atualizado',
+                'message' => 'Registro não atualizado. Erro: '.$e->getMessage(),
             ], 422);
         }
     }
