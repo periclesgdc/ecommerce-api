@@ -47,8 +47,6 @@ class PedidoController extends Controller
             $data = $request->all();
 
             $validator = Validator::make($data, [
-                'cliente_id' => 'required|regex:/^\d+$/i',
-                'status_id' => 'required|regex:/^\d+$/i',
                 'produtos' => ['required', 'regex:/^(?!\|)(\|?\d+)+$/']
             ]);
 
@@ -58,6 +56,8 @@ class PedidoController extends Controller
 
             $pedido = new Pedido();
             $pedido->fill($data);
+            $pedido->cliente_id = \Auth::user()->id;
+            $pedido->status_id = env('STATUS_ID_PEDIDO_DEFAULT');
             $pedido->save();
 
             foreach (explode('|', $data['produtos']) as $produto_id) {
@@ -91,7 +91,7 @@ class PedidoController extends Controller
             $data = $request->all();
 
             $validator = Validator::make($data, [
-                'status_id' => 'regex:/^\d+$/i',
+                //'status_id' => 'regex:/^\d+$/i',
                 'produtos' => ['regex:/^(?!\|)(\|?\d+)+$/']
             ]);
 
@@ -100,6 +100,11 @@ class PedidoController extends Controller
             }
 
             $pedido = Pedido::findOrFail($id);
+
+            if(\Auth::user()->id != $pedido->cliente_id) {
+                throw new \Exception("Você não tem permissão para alterar o pedido", 1);
+            }
+
             $pedido->fill($data);
             $pedido->save();
 
@@ -138,15 +143,19 @@ class PedidoController extends Controller
     {
         try {
             $pedido = Pedido::findOrFail($id);
+
+            if(\Auth::user()->id != $pedido->cliente_id) {
+                throw new \Exception("Você não tem permissão para exluir o pedido", 1);
+            }
+
             $pedido->delete();
 
             return response()->json([
                 'message' => 'Registro deletado com sucesso',
             ], 201);
         } catch (\Exception $e) {
-            var_dump($e);
             return response()->json([
-                'message' => 'Registro não excluído',
+                'message' => 'Registro não excluído. Erro: '.$e->getMessage(),
             ], 422);
         }
     }
