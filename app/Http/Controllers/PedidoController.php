@@ -10,6 +10,11 @@ use Validator;
 
 class PedidoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt.auth');
+    }
+
     public function index()
     {
         try {
@@ -86,7 +91,6 @@ class PedidoController extends Controller
             $data = $request->all();
 
             $validator = Validator::make($data, [
-                //'cliente_id' => 'regex:/^\d+$/i',
                 'status_id' => 'regex:/^\d+$/i',
                 'produtos' => ['regex:/^(?!\|)(\|?\d+)+$/']
             ]);

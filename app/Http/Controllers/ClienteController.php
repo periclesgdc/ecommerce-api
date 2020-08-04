@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Cliente;
 use Validator;
+use Hash;
 
 class ClienteController extends Controller
 {
+    public function __construct() {
+        $this->middleware('jwt.auth', ['except' => ['index', 'show', 'store']]);
+    }
+    
     public function index()
     {
         try {
@@ -39,6 +44,7 @@ class ClienteController extends Controller
             $validator = Validator::make($data, [
                 'nome' => 'required|max:200',
                 'email' => 'required|max:100|regex:/^.+@.+$/i',
+                'senha' => 'required|min:8|max:50',
                 'telefone' => 'required|max:25',
                 'endereco' => 'required|max:500'
             ]);
@@ -49,6 +55,7 @@ class ClienteController extends Controller
 
             $cliente = new Cliente();
             $cliente->fill($data);
+            $cliente->senha = Hash::make($data['senha']);
             $cliente->save();
 
             return response()->json([
@@ -69,6 +76,7 @@ class ClienteController extends Controller
             $validator = Validator::make($data, [
                 'nome' => 'max:200',
                 'email' => 'max:100|regex:/^.+@.+$/i',
+                'senha' => 'min:8|max:50',
                 'telefone' => 'max:25',
                 'endereco' => 'max:500'
             ]);
@@ -79,6 +87,7 @@ class ClienteController extends Controller
 
             $cliente = Cliente::findOrFail($id);
             $cliente->fill($data);
+            $cliente->senha = Hash::make($data['senha']);
             $cliente->save();
 
             return response()->json([

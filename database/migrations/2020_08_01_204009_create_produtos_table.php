@@ -17,8 +17,6 @@ class CreateProdutosTable extends Migration
             $table->bigIncrements('id');
             $table->string('nome', 200);
             $table->float('preco', 5, 2);
-            // $table->integer('pedido_id')->unsigned();
-            // $table->foreign('pedido_id')->references('id')->on('tb_pedidos')->onDelete('cascade');
             $table->timestamps();
         });
     }

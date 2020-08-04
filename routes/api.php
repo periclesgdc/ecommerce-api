@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 Route::get('/', function () {
     return response()->json(['message' => env('APP_NAME'), 'status' => 'Connected']);;
@@ -26,4 +26,9 @@ Route::resource('clientes', 'ClienteController');
 Route::resource('produtos', 'ProdutoController');
 Route::resource('pedidos', 'PedidoController');
 
-// Route::post('auth/login', 'AuthController@authenticate');
+Route::group(['prefix' => 'auth'], function ($router) {
+	Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+	Route::post('me', 'AuthController@me');
+});
