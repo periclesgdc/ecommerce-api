@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'users-web',
         ],
 
         'api' => [
@@ -72,10 +72,10 @@ return [
             'table' => 'tb_clientes'
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'users-web' => [
+            'driver' => 'database',
+            'table' => 'users',
+        ],
     ],
 
     /*
