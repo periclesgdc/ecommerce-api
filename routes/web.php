@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    //return view('welcome');
     return redirect('/home');
 });
 
@@ -22,12 +21,20 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::group(['prefix' => 'produtos'], function ($router) {
+Route::group(['middleware' => 'auth.basic', 'prefix' => 'produtos'], function ($router) {
 	Route::get('/', 'ProdutoController@listar')->name('produtos');
-	Route::get('/alterar/{id}', 'ProdutoController@alterar')->name('alterar');
+	Route::get('/novo', 'ProdutoController@novo');
+	Route::post('/novo', 'ProdutoController@novo');
+	Route::get('/alterar/{id}', 'ProdutoController@alterar');
 	Route::post('/alterar/{id}', 'ProdutoController@alterar');
-	Route::get('/deletar/{id}', 'ProdutoController@deletar')->name('deletar');
+	Route::get('/deletar/{id}', 'ProdutoController@deletar');
 });
 
-Route::get('/clientes');
-Route::get('/pedidos');
+Route::group(['middleware' => 'auth.basic', 'prefix' => 'clientes'], function ($router) {
+	Route::get('/', 'ClienteController@listar')->name('clientes');
+	Route::get('/alterar/{id}', 'ClienteController@alterar');
+	Route::post('/alterar/{id}', 'ClienteController@alterar');
+	Route::get('/deletar/{id}', 'ClienteController@deletar');
+});
+
+Route::get('/pedidos', 'PedidoController@listar');
