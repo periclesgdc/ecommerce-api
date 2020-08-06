@@ -22,6 +22,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
+Route::group(['prefix' => 'produtos'], function ($router) {
+	Route::get('/', 'ProdutoController@listar')->name('produtos');
+	Route::get('/alterar/{id}', 'ProdutoController@alterar')->name('alterar');
+	Route::post('/alterar/{id}', 'ProdutoController@alterar');
+	Route::get('/deletar/{id}', 'ProdutoController@deletar')->name('deletar');
+});
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/clientes');
+Route::get('/pedidos');

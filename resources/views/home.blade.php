@@ -8,13 +8,11 @@
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
+                    <div class="row">
+                        <div class="mr-2"><a href="/produtos" class="btn btn-primary">Ver Produtos</a></div>
+                        <div class="mr-2"><a href="/clientes" class="btn btn-danger">Ver Clientes</a></div>
+                        <div class=""><a href="/pedidos" class="btn btn-success">Ver Pedidos</a></div>
+                    </div>
                 </div>
             </div>
         </div>
